@@ -20,26 +20,21 @@ func ProductPage(c *gin.Context) {
 	if err != nil || idStart == 0 {
 		idStart = 1
 	} else {
-		idStart *= 10
+		idStart *= 10 + 3
 	}
 
 	var limit int
 
 	if idStart == 1 {
-		limit = 9
+		limit = 12
 	} else {
-		limit = 10
+		limit = 12
 	}
 
 	products := GetProductsByIdRange(idStart, limit)
 
-	// totalProducts := GetTotalProducts()
-
-	// totalPages := (totalProducts + limit - 1) / limit // Calculer le nombre de pages
-
 	c.JSON(http.StatusOK, gin.H{
 		"products": products,
-		// "totalPages": totalPages,
 	})
 }
 

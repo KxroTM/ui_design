@@ -1,20 +1,19 @@
 import React, { useEffect, useState, useRef } from "react";
+import "./App.css";
 
 function App() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
   
-  const productsPerPage = 10;
+  const productsPerPage = 12;
 
-  // Utiliser useRef pour suivre si la requête est en cours
   const loadingRef = useRef(false);
 
   useEffect(() => {
-    // Si une requête est déjà en cours, ne pas envoyer de nouvelle requête
+    //si requête en cours, ne pas envoyer de nouvelle requête
     if (loadingRef.current) return;
 
-    // Marquer que le chargement commence
     loadingRef.current = true;
     setLoading(true);
 
@@ -22,28 +21,29 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         setProducts((prevProducts) => [...prevProducts, ...data.products]);
-        setLoading(false);  // Fin du chargement
-        loadingRef.current = false; // Réinitialiser le flag de chargement
+        setLoading(false);
+        loadingRef.current = false;
       })
       .catch((error) => {
         console.error("Erreur lors de la récupération des produits :", error);
-        setLoading(false);  // Fin du chargement même en cas d'erreur
+        setLoading(false);
         loadingRef.current = false;
       });
-  }, [page]);  // Dépend de la page uniquement
+  }, [page]);
 
-  // Détecter si l'utilisateur atteint le bas de la page
+  //si l'utilisateur atteint le bas de la page
   const handleScroll = () => {
     const bottom = window.innerHeight + document.documentElement.scrollTop === document.documentElement.offsetHeight;
     if (bottom && !loadingRef.current) {
-      setPage((prevPage) => prevPage + 1);  // Incrémenter 'page'
+      
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);  // On attache le listener une seule fois au début
+  }, []);
 
   if (loading && page === 1) {
     return <p>Chargement des produits...</p>;
@@ -51,17 +51,17 @@ function App() {
 
   return (
     <div>
-      <h1>Liste des produits</h1>
-      <ul>
+      <h1 class="title">Produits</h1>
+      <div class="all-products">
         {products.map((product) => (
-          <li key={product.id}>
-            <h2>{product.name}</h2>
-            <p>{product.description}</p>
-            <p>Prix : ${parseFloat(product.price).toFixed(2)}</p>
-            <img src={product.image_url} alt={product.name} width="100" />
-          </li>
+          <div class="product" key={product.id}>  
+              <h2 class="product-title">{product.name}</h2>
+              <img src={product.image_url} alt={product.name} width="100" />
+              <p class="product-description">{product.description}</p>
+              <p class="price"> ${parseFloat(product.price).toFixed(2)}</p>
+          </div>
         ))}
-      </ul>
+      </div>
 
       {loading && <p>Chargement...</p>}
     </div>
